@@ -1,0 +1,128 @@
+﻿@using SharpAstrology.Enums
+
+
+<svg viewBox="0 0 1 1" fill="transparent" stroke-width="0.1" stroke="@Color"
+     width="@Width" height="@Height" x="@RelativeX" y="@RelativeY" class="@Class"
+     style="overflow: visible">
+    @switch (Planet)
+    {
+    case Planets.Sun:
+        <circle cx="0.5" cy="0.5" r="0.44" />
+        <circle cx="0.5" cy="0.5" r="0.05" />
+        break;
+    case Planets.Earth:
+        <circle cx="0.5" cy="0.5" r="0.44" fill="transparent" />
+        <line x1="0.5" y1="0" x2="0.5" y2="1" />
+        <line x1="0" y1="0.5" x2="1" y2="0.5" />
+        break;
+    case Planets.Moon:
+        <path d="
+              M 0.1 0.4 
+              A 0.2 0.2  0  1  1  0.1 0.6
+              A 0.4 0.4  0  1  0  0.1 0.4" fill="transparent"/>
+        break;
+    case Planets.NorthNode:
+        <circle cx="0.3" cy="0.85" r="0.1" stroke-width="0.1" />
+        <circle cx="0.7" cy="0.85" r="0.1" stroke-width="0.1" />
+        <path d="M 0.4 0.85 C -0.1 0.1  1.1 0.1  0.6 0.85" stroke-width="0.1"></path>
+        break;
+    case Planets.SouthNode:
+        <circle cx="0.3" cy="0.15" r="0.1" />
+        <circle cx="0.7" cy="0.15" r="0.1" />
+        <path d="M 0.4 0.15 C -0.1 0.9  1.1 0.9  0.6 0.15"></path>
+        break;
+    case Planets.Mercury:
+        <path d="M 0.3 0 A 0.15 0.15 0 0 0 0.7 0" />
+        <circle cx="0.5" cy="0.4" r="0.2"/>
+        <line x1="0.5" y1="0.6" x2="0.5" y2="1.1" />
+        <line x1="0.3" y1="0.8" x2="0.7" y2="0.8" />
+        break;
+    case Planets.Venus:
+        <circle cx="0.5" cy="0.27" r="0.21" />
+        <line x1="0.5" y1="0.5" x2="0.5" y2="1" />
+        <line x1="0.2" y1="0.7" x2="0.8" y2="0.7" />
+        break;
+    case Planets.Mars:
+        <circle cx="0.35" cy="0.65" r="0.3" />
+        <line x1="0.5" y1="0.05" x2="1" y2="0.05" />
+        <line x1="0.95" y1="0" x2="0.95" y2="0.5" />
+        <line x1="0.55" y1="0.45" x2="1" y2="0" />
+        break;
+    case Planets.Jupiter:
+        <line x1="0.6" y1="0.1" x2="0.6" y2="1" />
+        <line x1="0" y1="0.7" x2="1" y2="0.7" />
+        <path d="M 0 0.7 Q 0.7 0.5  0.2 0" />
+        break;
+    case Planets.Saturn:
+        <g transform="translate(0.2,0)">
+            <line x1="0.2" y1="0" x2="0.2" y2="0.8"/>
+            <line x1="0" y1="0.2" x2="0.4" y2="0.2"/>
+            <path d="M 0.2 0.5  C 0.4 0.3  0.8 0.6  0.4 0.8  C 0.4 0.8  0.2 1 0.5 1"/>   
+        </g>
+        break;
+    case Planets.Uranus:
+        <circle cx="0.5" cy="0.7" r="0.25" />
+        <circle cx="0.5" cy="0.7" r="0.05" />
+        <line x1="0.5" y1="0.5" x2="0.5" y2="0" />
+        <line x1="0.5" y1="0" x2="0.2" y2="0.3" />
+        <line x1="0.5" y1="0" x2="0.8" y2="0.3"/>
+        break;
+    case Planets.Neptune:
+        <line x1="0.5" y1="0.1" x2="0.5" y2="1" />
+        <line x1="0.3" y1="0.8" x2="0.7" y2="0.8" />
+        <path d="M 0.1 0 Q 0.5 1.1  0.9 0" />
+        break;
+    case Planets.Pluto:
+        <g transform="translate(0.1,0)">
+            <line x1="0.2" y1="0" x2="0.2" y2="1"/>
+            <line x1="0.2" y1="0.95" x2="0.5" y2="0.95"/>
+            <path d="M 0.2 0.2 C 0.8 -0.2  0.8 1  0.2 0.6"/>
+        </g>    
+        break;
+    case Planets.Chiron:
+        <circle cx="0.4" cy="0.75" r="0.2" />
+        <line x1="0.4" y1="0.55" x2="0.4" y2="0" />
+        <line x1="0.4" y1="0.2" x2="0.6" y2="0" />
+        <line x1="0.4" y1="0.2" x2="0.6" y2="0.4" /> 
+        break;
+    }
+
+    <text x="1.1" y="1.1" letter-spacing="initial" font-size="3%" text-anchor="end" stroke-width="0.03" class="@Class"
+          style="visibility: @(_showRetrograde(ShowRetrograde, Planet) ? "visible" : "hidden"); pointer-events: none">
+        R
+    </text>
+
+</svg>
+
+@code {
+
+    [Parameter]
+    public Planets Planet { get; set; }
+
+    [Parameter]
+    public bool ShowRetrograde { get; set; }
+
+    [Parameter]
+    public string RelativeX { get; set; } = "0";
+
+    [Parameter]
+    public string RelativeY { get; set; } = "0";
+
+    [Parameter]
+    public string Width { get; set; } = "100%";
+
+    [Parameter]
+    public string Height { get; set; } = "100%";
+
+    [Parameter]
+    public string Color { get; set; } = "black";
+
+    [Parameter]
+    public string Class { get; set; } = "";
+
+    private bool _showRetrograde(bool isRetrograde, Planets planets)
+    {
+        return isRetrograde && planets is not Planets.NorthNode and not Planets.SouthNode;
+    }
+
+}

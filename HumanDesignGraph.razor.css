@@ -1,0 +1,16 @@
+.center {
+    stroke: black;
+    stroke-width: 0.01;
+}
+.center:hover {
+    fill: yellow;
+}
+
+.channel {
+    stroke-width: 0.02;
+}
+
+.channel:hover {
+    stroke: yellow;
+    cursor: pointer;
+}

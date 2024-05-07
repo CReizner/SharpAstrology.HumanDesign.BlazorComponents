@@ -1,0 +1,12 @@
+.hoverable-circle:hover {
+    fill: yellow;
+    opacity: 0.6;
+}
+text {
+    font-size: 4%;
+    font-weight: bold;
+    letter-spacing: initial;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+}

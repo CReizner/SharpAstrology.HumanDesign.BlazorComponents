@@ -1,0 +1,42 @@
+@using SharpAstrology.Enums
+@namespace SharpAstrology.HumanDesign.BlazorComponents
+
+<svg width="100%" height="100%" viewBox="0 0 1 1" @onclick="() => OnClickCallback.InvokeAsync(Gate)">
+    @switch (Activation)
+    {
+    case ActivationTypes.FirstComparator:
+        <circle cx="0.5" cy="0.5" r="0.5"
+                fill="@FirstComparerColor"/>
+        break;
+    case ActivationTypes.SecondComparator:
+        <circle cx="0.5" cy="0.5" r="0.5"
+                fill="@SecondComparerColor"/>
+        break;
+    case ActivationTypes.Mixed:
+        <svg width="50%" height="100%">
+            <circle cx="0.5" cy="0.5" r="0.5"
+                    fill="@SecondComparerColor"/>
+        </svg>
+        <svg x="0.5" width="50%" height="100%">
+            <circle cx="0" cy="0.5" r="0.5"
+                    fill="@FirstComparerColor"/>
+        </svg>
+        break;
+    }
+    <circle cx="0.5" cy="0.5" r="0.5" fill="transparent" class="hoverable-circle"/>
+
+    <text x="0.5" y="0.5" fill="@(Activation == ActivationTypes.None ? "grey" : "white")">
+        @Gate.ToNumber()
+    </text>
+</svg>
+
+@code {
+
+[EditorRequired][Parameter] public Gates Gate { get; set; }
+[EditorRequired][Parameter] public ActivationTypes Activation { get; set; }
+[Parameter] public EventCallback<Gates> OnClickCallback { get; set; }
+
+[Parameter] public string FirstComparerColor { get; set; } = "#000000";
+[Parameter] public string SecondComparerColor { get; set; } = "#ff4081";
+
+}
