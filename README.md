@@ -47,4 +47,6 @@ The goal of this package is to provide typical human design components. Contribu
         chart = new HumanDesignChart(new DateTime(1988, 9, 4, 1, 15, 0, DateTimeKind.Utc), eph);
     }
 }
+
+![A Human Design chart example](https://github.com/CReizner/SharpAstrology.HumanDesign.BlazorComponents/blob/master/.github_assets/hd_chart_0.png)
 ```
