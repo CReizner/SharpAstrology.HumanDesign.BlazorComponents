@@ -1,0 +1,74 @@
+@using SharpAstrology.DataModels
+@using SharpAstrology.Definitions
+@using SharpAstrology.Enums
+
+
+@if (Activations is not null)
+{
+
+    <div style="display: grid;
+                grid-template-rows: repeat(13,7.7%);
+                grid-template-columns: 100%;
+                height: @Height;
+                max-height: 100%;
+                width: auto;
+                max-width: 140px;
+                border: 1pt solid lightgray;
+                border-radius: 1rem;
+                padding: 0.5rem">
+            @foreach (var planet in HumanDesignDefaults.HumanDesignPlanets)
+            {
+
+            <div style="display: flex;
+                flex-direction: @(PlanetsRight ? "row-reverse" : "row");
+                align-items: center;
+                justify-content: space-between;
+                margin: 0.25rem 0 0.25rem 0;">
+
+                <p style="width: 100%; color: @Color; font-weight: bold; text-align: center">
+                    @Activations[planet].Gate.ToNumber() / @Activations[planet].Line.ToNumber()
+                </p>
+                <svg style="width: 100%; height: 100%;">
+                    <PlanetSymbol Planet="planet" Color="@Color"/>
+                </svg>
+                @if (States is not null)
+                {
+                    <svg style="width: 40px; height: 100%; margin: auto; 
+                                fill: @(States[planet].FixingStateChangedByComparer ? ChangedByComparatorColor : Color); 
+                                stroke: @(States[planet].FixingStateChangedByComparer ? ChangedByComparatorColor : Color); 
+                        stroke-width: 10%" viewBox="0 0 1 1">
+                        @switch (States[planet].FixingState)
+                        {
+                            case FixingState.Detriment:
+                                <polygon points="0,0 1,0 0.5,1" />
+                                break;
+                            case FixingState.Exalted:
+                                <polygon points="0,1 1,1 0.5,0" />
+                                break;
+                            case FixingState.Juxtaposed:
+                                <line x1="0" x2="1" y1="0.5" y2="0.5" />
+                                <line x1="0.5" x2="0.5" y1="0" y2="1"/>
+                                <line x1="0.2" x2="0.8" y1="0.2" y2="0.8" />
+                                <line x1="0.8" x2="0.2" y1="0.2" y2="0.8" />
+                                break;
+                            default:
+                                break;
+                        }
+                    </svg>
+                }
+            </div>
+            }
+    </div>
+
+}
+
+@code {
+
+    [EditorRequired][Parameter] public Dictionary<Planets, Activation> Activations { get; set; }
+    [Parameter] public Dictionary<Planets, PlanetaryFixation>? States { get; set; }
+    [Parameter] public bool PlanetsRight { get; set; } = false;
+    [Parameter] public string Color { get; set; } = "#000000";
+    [Parameter] public string ChangedByComparatorColor { get; set; } = "#000000";
+    [Parameter] public string Height { get; set; } = "100%";
+
+}

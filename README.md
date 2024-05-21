@@ -12,11 +12,20 @@ The goal of this package is to provide typical human design components. Contribu
 <PageTitle>Human Design Chart Example</PageTitle>
 
 
-<HumanDesignGraph Chart="chart" Height="800px"
-                  CenterColorMap="_centerColorMap"
-                  FirstComparerColor="@firstComparerColor"
-                  SecondComparerColor="@secondComparerColor"
-                  />
+<div style="display: flex; flex-direction: row; height: 700px; align-items: center; justify-content: space-between; max-width: 800px">
+    
+    <HumanDesignActivations Activations="chart.PersonalityActivation" Height="500px" PlanetsRight="false"
+                            States="chart.PersonalityFixation"/>
+    
+    <HumanDesignGraph Chart="chart"
+                      CenterColorMap="centerColorMap"
+                      FirstComparerColor="@firstComparerColor"
+                      SecondComparerColor="@secondComparerColor"
+    />
+        
+    <HumanDesignActivations Activations="chart.DesignActivation" Height="500px" PlanetsRight="true"
+                            States="chart.DesignFixation" Color="#ff4081" ChangedByComparatorColor="green"/>
+</div>
 
 
 @code
@@ -27,7 +36,7 @@ The goal of this package is to provide typical human design components. Contribu
     // These are the default colors and optional parameters.
     private readonly string firstComparerColor = "#000000";
     private readonly string secondComparerColor = "#ff4081";
-    private Dictionary<Centers, string> _centerColorMap = new()
+    private Dictionary<Centers, string> centerColorMap = new()
     {
             [Centers.Root] = "#E88835",
             [Centers.Sacral] = "#FE352C",
@@ -48,4 +57,4 @@ The goal of this package is to provide typical human design components. Contribu
     }
 }
 ```
-![A Human Design chart example](./.github_assets/hd_chart_0.png)
+![A Human Design chart example](./.github_assets/hd_chart_0_with_planet_states.png)
