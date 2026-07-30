@@ -1,0 +1,60 @@
+/* The rows share the height of the list in equal parts. There is no fixed number of rows,
+   so the list adapts if the planets of the Human Design system ever change. The gaps are
+   taken out of the available height before the rows are measured, which is why the content
+   cannot become higher than the list itself. */
+.activations {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-auto-rows: minmax(0, 1fr);
+    row-gap: 0.25rem;
+    box-sizing: border-box;
+    max-height: 100%;
+    width: 140px;
+    max-width: 100%;
+    padding: 0.5rem;
+    border: 1pt solid lightgray;
+    border-radius: 1rem;
+}
+
+.activation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    min-height: 0;
+}
+
+.activation.planets-right {
+    flex-direction: row-reverse;
+}
+
+/* The gate and line number take the space that is left over. It stays on one line, a
+   wrapped number would cost the row its height. */
+.gate {
+    flex: 1 1 auto;
+    margin: 0;
+    color: var(--activations-color);
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Both symbols keep their aspect ratio, so the height of a row decides their size.
+   The state marker is the smaller of the two, as it is only a triangle or a cross. */
+.symbol,
+.state {
+    flex: 0 0 auto;
+    aspect-ratio: 1;
+}
+
+.symbol {
+    height: 100%;
+}
+
+.state {
+    height: 60%;
+    fill: var(--state-color);
+    stroke: var(--state-color);
+    stroke-width: 10%;
+}

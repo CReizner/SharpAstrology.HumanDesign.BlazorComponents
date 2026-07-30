@@ -1,416 +1,180 @@
-@using System.Globalization
 @using SharpAstrology.Enums
+@using SharpAstrology.DataModels
 
 
 <svg x="0" y="0" viewBox="0 0 1 1.5" width="@Width" height="@Height">
 
     <!-- Curved Channels -->
-    @foreach (var (channel, x1, y1, tx1, ty1, mx, my,x2, y2, tx2, ty2) in new[]
+    @foreach (var channel in CurvedChannels)
     {
-          (Channels.Key34Key57, "0.42","1.07", "0.4","1", "0.32","0.93", "0.075","0.97", "0.2","0.8"),
-          (Channels.Key10Key20, "0.42","0.8", "0.36","0.75", "0.37","0.7", "0.41","0.57", "0.4","0.55"),
-          (Channels.Key10Key57, "0.42","0.8", "0.34","0.8", "0.245","0.845", "0.08","0.96", "0.13","0.9"),
-          (Channels.Key10Key34, "0.42", "0.8", "0.32", "0.9", "0.322", "0.94", "0.42", "1.08", "0.32", "1.08"),
-          (Channels.Key20Key34, "0.42","0.56", "0.32","0.66", "0.32", "0.8", "0.42","1.07", "0.32","1")
-    })
-    {
-    var (gate1, gate2) = channel.ToGates();
-    
-          switch (Chart.GateActivations[gate1])
-          {
-          case ActivationTypes.FirstComparator:
-                <path d="@($"M {x1} {y1} C {tx1} {ty1} {mx} {my} {mx} {my}")"
-                      fill="none"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.SecondComparator:
-                <path d="@($"M {x1} {y1} C {tx1} {ty1} {mx} {my} {mx} {my}")"
-                      fill="none"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.Mixed:
-                <path d="@($"M {x1} {y1} C {tx1} {ty1} {mx} {my} {mx} {my}")"
-                      fill="none"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                <path d="@($"M {x1} {y1} C {tx1} {ty1} {mx} {my} {mx} {my}")"
-                      fill="none"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      stroke-dasharray="0.01,0.01"
-                      pointer-events="none"/>
-                break;
-          default:
-                <path d="@($"M {x1} {y1} C {tx1} {ty1} {mx} {my} {mx} {my}")"
-                      fill="none"
-                      stroke="lightgrey"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          }
-          switch (Chart.GateActivations[gate2])
-          {
-                case ActivationTypes.FirstComparator:
-                <path d="@($"M {mx} {my} C {mx} {my} {tx2} {ty2} {x2} {y2}")"
-                      fill="none"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.SecondComparator:
-                <path d="@($"M {mx} {my} C {mx} {my} {tx2} {ty2} {x2} {y2}")"
-                      fill="none"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.Mixed:
-                <path d="@($"M {mx} {my} C {mx} {my} {tx2} {ty2} {x2} {y2}")"
-                      fill="none"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                <path d="@($"M {mx} {my} C {mx} {my} {tx2} {ty2} {x2} {y2}")"
-                      fill="none"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      stroke-dasharray="0.01,0.01"
-                      pointer-events="none"/>
-                break;
-          default:
-                <path d="@($"M {mx} {my} C {mx} {my} {tx2} {ty2} {x2} {y2}")"
-                      fill="none"
-                      stroke="lightgrey"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          }
-          <path @key="channel" d="@($"M {x1} {y1} C {tx1} {ty1} {mx} {my} {mx} {my} C {mx} {my} {tx2} {ty2} {x2} {y2}")"
-                fill="none"
-                class="channel"
-                stroke="transparent"
-                @onclick="() => OnElementClick.InvokeAsync(channel)"/>
+        foreach (var (color, dash) in _strokes(Chart.GateActivations[channel.Gate1]))
+        {
+            <path d="@channel.FirstHalf"
+                  fill="none"
+                  stroke="@color"
+                  stroke-width="0.02"
+                  stroke-dasharray="@dash"
+                  pointer-events="none"/>
+        }
+        foreach (var (color, dash) in _strokes(Chart.GateActivations[channel.Gate2]))
+        {
+            <path d="@channel.SecondHalf"
+                  fill="none"
+                  stroke="@color"
+                  stroke-width="0.02"
+                  stroke-dasharray="@dash"
+                  pointer-events="none"/>
+        }
+        <path @key="channel.Channel" d="@channel.Whole"
+              fill="none"
+              class="channel"
+              stroke="transparent"
+              @onclick="_channelClick(channel.Channel)"/>
     }
 
     <!-- Line Channels -->
-    @foreach (var (channel, x1, y1, x2, y2) in new[]
+    @foreach (var channel in StraightChannels)
     {
-          (Channels.Key26Key44, "0.66", "0.925", "0.12", "0.99"), (Channels.Key42Key53, "0.45", "1.2", "0.45", "1.3"),
-          (Channels.Key3Key60, "0.50", "1.2", "0.50", "1.3"), (Channels.Key9Key52, "0.55", "1.2", "0.55", "1.3"),
-          (Channels.Key30Key41, "0.98", "1.1", "0.58", "1.47"), (Channels.Key39Key55, "0.58", "1.42", "0.96", "1.05"),
-          (Channels.Key19Key49, "0.58", "1.37", "0.91", "1.03"), (Channels.Key18Key58, "0.025", "1.1", "0.41", "1.46"),
-          (Channels.Key28Key38, "0.07", "1.085", "0.41", "1.41"), (Channels.Key32Key54, "0.11", "1.05", "0.41", "1.36"),
-          (Channels.Key6Key59, "0.84", "1.02", "0.58", "1.145"), (Channels.Key27Key50, "0.41", "1.14", "0.16", "1.02"),
-          (Channels.Key5Key15, "0.45", "1", "0.46", "0.85"), (Channels.Key2Key14, "0.5", "0.85", "0.5", "1"),
-          (Channels.Key29Key46, "0.55", "1", "0.54", "0.85"), (Channels.Key37Key40, "0.88", "0.995", "0.74", "0.94"),
-          (Channels.Key12Key22, "0.59", "0.52", "0.925", "0.96"), (Channels.Key35Key36, "0.59", "0.48", "0.965", "0.94"),
-          (Channels.Key21Key45, "0.73", "0.86", "0.58", "0.55"), (Channels.Key25Key51, "0.58", "0.8", "0.69", "0.89"),
-          (Channels.Key16Key48, "0.42", "0.48", "0.03", "0.94"), (Channels.Key20Key57, "0.42", "0.56", "0.07", "0.97"),
-          (Channels.Key7Key31, "0.46", "0.76", "0.45", "0.6"), (Channels.Key1Key8, "0.5", "0.73", "0.5", "0.6"),
-          (Channels.Key13Key33, "0.54", "0.75", "0.55", "0.6"), (Channels.Key17Key62, "0.465", "0.27", "0.45", "0.45"),
-          (Channels.Key23Key43, "0.5", "0.45", "0.5", "0.32"), (Channels.Key11Key56, "0.535", "0.27", "0.55", "0.45"),
-          (Channels.Key47Key64, "0.45", "0.22", "0.45", "0.12"), (Channels.Key24Key61, "0.5", "0.22", "0.5", "0.12"),
-          (Channels.Key4Key63, "0.55", "0.22", "0.55", "0.12")
-    })
-    {
-          var (gate1, gate2) = channel.ToGates();
-
-          switch (Chart.GateActivations[gate1])
-          {
-          case ActivationTypes.FirstComparator:
-                <line x1="@x1" y1="@y1" x2="@_midpoint(x1, x2)" y2="@_midpoint(y1, y2)"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.SecondComparator:
-                <line x1="@x1" y1="@y1" x2="@_midpoint(x1, x2)" y2="@_midpoint(y1, y2)"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.Mixed:
-                <line x1="@x1" y1="@y1" x2="@_midpoint(x1, x2)" y2="@_midpoint(y1, y2)"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                <line x1="@x1" y1="@y1" x2="@_midpoint(x1, x2)" y2="@_midpoint(y1, y2)"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      stroke-dasharray="0.01,0.01"
-                      pointer-events="none"/>
-                break;
-          default:
-                <line x1="@x1" y1="@y1" x2="@_midpoint(x1, x2)" y2="@_midpoint(y1, y2)"
-                      stroke="lightgrey"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          }
-          switch (Chart.GateActivations[gate2])
-          {
-          case ActivationTypes.FirstComparator:
-                <line x1="@_midpoint(x1, x2)" y1="@_midpoint(y1, y2)" x2="@x2" y2="@y2"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.SecondComparator:
-                <line x1="@_midpoint(x1, x2)" y1="@_midpoint(y1, y2)" x2="@x2" y2="@y2"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          case ActivationTypes.Mixed:
-                <line x1="@_midpoint(x1, x2)" y1="@_midpoint(y1, y2)" x2="@x2" y2="@y2"
-                      stroke="@FirstComparerColor"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                <line x1="@_midpoint(x1, x2)" y1="@_midpoint(y1, y2)" x2="@x2" y2="@y2"
-                      stroke="@SecondComparerColor"
-                      stroke-width="0.02"
-                      stroke-dasharray="0.01,0.01"
-                      pointer-events="none"/>
-                break;
-          default:
-                <line x1="@_midpoint(x1, x2)" y1="@_midpoint(y1, y2)" x2="@x2" y2="@y2"
-                      stroke="lightgrey"
-                      stroke-width="0.02"
-                      pointer-events="none"/>
-                break;
-          }
-
-          <line @key="channel" x1=@x1 y1=@y1 x2=@x2 y2=@y2
-                class="channel"
-                stroke="transparent"
-                @onclick="() => OnElementClick.InvokeAsync(channel)"/>
+        foreach (var (color, dash) in _strokes(Chart.GateActivations[channel.Gate1]))
+        {
+            <line x1="@channel.From.XText" y1="@channel.From.YText"
+                  x2="@channel.Middle.XText" y2="@channel.Middle.YText"
+                  stroke="@color"
+                  stroke-width="0.02"
+                  stroke-dasharray="@dash"
+                  pointer-events="none"/>
+        }
+        foreach (var (color, dash) in _strokes(Chart.GateActivations[channel.Gate2]))
+        {
+            <line x1="@channel.Middle.XText" y1="@channel.Middle.YText"
+                  x2="@channel.To.XText" y2="@channel.To.YText"
+                  stroke="@color"
+                  stroke-width="0.02"
+                  stroke-dasharray="@dash"
+                  pointer-events="none"/>
+        }
+        <line @key="channel.Channel"
+              x1="@channel.From.XText" y1="@channel.From.YText"
+              x2="@channel.To.XText" y2="@channel.To.YText"
+              class="channel"
+              stroke="transparent"
+              @onclick="_channelClick(channel.Channel)"/>
     }
 
+    <!-- Centers with their gates -->
+    @foreach (var center in CenterLayouts)
+    {
+        <svg @key="center.Center" id="@_centerId(center)" data-center="@center.Name"
+             x="@center.Position.XText" y="@center.Position.YText"
+             width="@center.Size.WidthText" height="@center.Size.HeightText"
+             viewBox="@center.ViewBoxText"
+             style="@center.Style">
 
-    <!-- Crown Center -->
-    <svg id="crown" x="0.4" y="0" width="0.2" height="0.15" viewBox="0 0 1 0.75">
-        <polygon points="0,0.75 1,0.75 0.5,0" class="center"
-                 @onclick="() => OnElementClick.InvokeAsync(Centers.Crown)"
-                 fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Crown) ? CenterColorMap[Centers.Crown] : "white")"/>
+            @if (center.Outline is null)
+            {
+                <rect x="0" y="0" rx="0.1" ry="0.1" width="1" height="1" class="center"
+                      @onclick="_centerClick(center.Center)"
+                      fill="@_centerFill(center.Center)"/>
+            }
+            else
+            {
+                <polygon points="@center.Outline" class="center"
+                         @onclick="_centerClick(center.Center)"
+                         fill="@_centerFill(center.Center)"/>
+            }
 
-        @foreach (var (key, x, y) in new[]
-        {
-            (Gates.Key64, "0.15", "0.5"), (Gates.Key61, "0.4", "0.5"), (Gates.Key63, "0.65", "0.5")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.2" height="0.2666" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Mind Center -->
-    <svg id="mind" x="0.4" y="0.2" width="0.2" height="0.15" viewBox="0 0 1 0.75">
-        <polygon points="0,0 1,0 0.5,0.75" class="center"
-                 @onclick="() => OnElementClick.InvokeAsync(Centers.Mind)"
-                 fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Mind) ? CenterColorMap[Centers.Mind] : "white")"/>
-
-        @foreach (var (key, x, y) in new[]
-        {
-            (Gates.Key47, "0.15", "-0.05"), (Gates.Key24, "0.4", "-0.05"), (Gates.Key4, "0.65", "-0.05"),
-            (Gates.Key43, "0.40", "0.45"), (Gates.Key17, "0.25", "0.23"), (Gates.Key11, "0.55", "0.23")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.2" height="0.2666" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Throat Center -->
-    <svg id="throat" x="0.4" y="0.425" width="0.2" height="0.2" viewBox="0 0 1 1">
-        <rect x="0" y="0" rx="0.1" ry="0.1" width="1" height="1" class="center"
-              @onclick="() => OnElementClick.InvokeAsync(Centers.Throat)"
-              fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Throat) ? CenterColorMap[Centers.Throat] : "white")"/>
-
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key56, "0.65", "0"), (Gates.Key23, "0.4", "0"), (Gates.Key62, "0.15", "0"),
-              (Gates.Key33, "0.65", "0.8"), (Gates.Key8, "0.4", "0.8"), (Gates.Key31, "0.15", "0.8"),
-              (Gates.Key16, "0", "0.2"), (Gates.Key20, "0", "0.6"), (Gates.Key45, "0.8", "0.6"),
-              (Gates.Key35, "0.8", "0.2"), (Gates.Key12, "0.8", "0.4")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.2" height="0.2" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Self Center -->
-    <svg id="self" x="0.4" y="0.71" width="0.2" height="0.2" viewBox="0 0 1 1">
-        <polygon points="0.5,0 1,0.5 0.5,1 0,0.5" class="center"
-                 @onclick="() => OnElementClick.InvokeAsync(Centers.Self)"
-                 fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Self) ? CenterColorMap[Centers.Self] : "white")"/>
-
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key2, "0.4", "0.75"), (Gates.Key1, "0.4", "0.05"), (Gates.Key13, "0.57", "0.22"),
-              (Gates.Key46, "0.57", "0.58"), (Gates.Key25, "0.75", "0.4"), (Gates.Key7, "0.22", "0.22"),
-              (Gates.Key15, "0.22", "0.58"), (Gates.Key10, "0.05", "0.4")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.2" height="0.2" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Heart Center -->
-    <svg id="heart" x="0.62" y="0.82" width="0.15" height="0.15" viewBox="0 0 1 1">
-        <polygon points="0,0.8 0.8,0 1,1" class="center"
-                 @onclick="() => OnElementClick.InvokeAsync(Centers.Heart)"
-                 fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Heart) ? CenterColorMap[Centers.Heart] : "white")"/>
-
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key26, "0.15", "0.59"), (Gates.Key51, "0.37", "0.37"), (Gates.Key21, "0.58", "0.15"),
-              (Gates.Key40, "0.7", "0.7")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.2666" height="0.2666" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-
-    </svg>
-
-    <!-- Emotion Center -->
-    <svg id="emotion" x="0.75" y="0.9" width="0.25" height="0.25" viewBox="0 0 1 1">
-        <polygon points="1,0 1,1 0.2,0.5" class="center"
-                 @onclick="() => OnElementClick.InvokeAsync(Centers.Emotions)"
-                 fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Emotions) ? CenterColorMap[Centers.Emotions] : "white")"/>
-
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key30, "0.8", "0.74"), (Gates.Key55, "0.63", "0.63"), (Gates.Key49, "0.45", "0.52"),
-              (Gates.Key6, "0.29", "0.415"), (Gates.Key37, "0.45", "0.32"), (Gates.Key22, "0.63", "0.21"),
-              (Gates.Key36, "0.8", "0.1")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.16" height="0.16" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Spleen Center -->
-    <svg id="spleen" x="0" y="0.9" width="0.25" height="0.25" viewBox="0 0 1 1">
-        <polygon points="0,0 0,1 0.8,0.5" class="center"
-                 @onclick="() => OnElementClick.InvokeAsync(Centers.Spleen)"
-                 fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Spleen) ? CenterColorMap[Centers.Spleen] : "white")"/>
-
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key18, "0.05", "0.75"), (Gates.Key48, "0.05", "0.1"), (Gates.Key28, "0.2", "0.65"),
-              (Gates.Key57, "0.2", "0.2"), (Gates.Key32, "0.37", "0.55"), (Gates.Key44, "0.37", "0.3"),
-              (Gates.Key50, "0.53", "0.41")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.16" height="0.16" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Sacral Center -->
-    <svg id="sacral" x="0.4" y="1" width="0.2" height="0.2" viewBox="0 0 1 1">
-        <rect x="0" y="0" rx="0.1" ry="0.1" width="1" height="1" class="center"
-              @onclick="() => OnElementClick.InvokeAsync(Centers.Sacral)"
-              fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Sacral) ? CenterColorMap[Centers.Sacral] : "white")"/>
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key29, "0.65", "0"), (Gates.Key14, "0.4", "0"), (Gates.Key5, "0.15", "0"),
-              (Gates.Key9, "0.65", "0.8"), (Gates.Key3, "0.4", "0.8"), (Gates.Key42, "0.15", "0.8"),
-              (Gates.Key34, "0", "0.2"), (Gates.Key27, "0", "0.6"), (Gates.Key59, "0.8", "0.6")
-        })
-        {
-              <svg id="@key.ToString()" x="@x" y="@y" width="0.2" height="0.2" viewBox="0 0 1 1" class="door">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
-
-    <!-- Root Center -->
-    <svg id="root" x="0.4" y="1.31" width="0.2" height="0.2" viewBox="0 0 1 1">
-        <rect x="0" y="0" rx="0.1" ry="0.1" width="1" height="1" class="center"
-              @onclick="() => OnElementClick.InvokeAsync(Centers.Root)"
-              fill="@(Chart.ConnectedComponents.ContainsKey(Centers.Root) ? CenterColorMap[Centers.Root] : "white")"/>
-        @foreach (var (key, x, y) in new[]
-        {
-              (Gates.Key19, "0.8", "0.2"), (Gates.Key39, "0.8", "0.45"), (Gates.Key41, "0.8", "0.7"),
-              (Gates.Key52, "0.65", "0"), (Gates.Key60, "0.4", "0"), (Gates.Key53, "0.15", "0"),
-              (Gates.Key54, "0", "0.2"), (Gates.Key38, "0", "0.45"), (Gates.Key58, "0", "0.7")
-        })
-        {
-              <svg @key="@key" x="@x" y="@y" width="0.2" height="0.2" viewBox="0 0 1 1">
-                  <_gate Gate="key"
-                         Activation="Chart.GateActivations[key]"
-                         OnClickCallback="@(k => OnElementClick.InvokeAsync(k))"
-                         FirstComparerColor=@FirstComparerColor
-                         SecondComparerColor=@SecondComparerColor/>
-              </svg>
-        }
-    </svg>
+            @foreach (var gate in center.Gates)
+            {
+                <svg @key="gate.Gate" id="@_gateId(gate)" data-gate="@gate.NumberText"
+                     x="@gate.Position.XText" y="@gate.Position.YText"
+                     width="@center.GateSize.WidthText" height="@center.GateSize.HeightText"
+                     viewBox="0 0 1 1">
+                    <_gate Gate="gate.Gate"
+                           Activation="Chart.GateActivations[gate.Gate]"
+                           OnClickCallback="OnGateClick"
+                           FirstComparerColor="@FirstComparerColor"
+                           SecondComparerColor="@SecondComparerColor"/>
+                </svg>
+            }
+        </svg>
+    }
 </svg>
 
 
-
 @code {
-      
-      [EditorRequired][Parameter] public IHumanDesignChart Chart { get; set; }
-      
+
+      /// <summary>
+      /// The chart that is drawn. Without it the component cannot render.
+      /// </summary>
+      [EditorRequired][Parameter] public HumanDesignChart Chart { get; set; } = null!;
+
+      /// <summary>
+      /// The width of the chart. Goes into the width attribute of the outer svg element.
+      /// </summary>
       [Parameter] public string Width { get; set; } = "auto";
+
+      /// <summary>
+      /// The height of the chart. Goes into the height attribute of the outer svg element.
+      /// </summary>
       [Parameter] public string Height { get; set; } = "100%";
-      [Parameter] public EventCallback<Enum> OnElementClick { get; set; }
-      
+
+      /// <summary>
+      /// Raised with the gate that was clicked.
+      /// </summary>
+      [Parameter] public EventCallback<Gates> OnGateClick { get; set; }
+
+      /// <summary>
+      /// Raised with the channel that was clicked. The whole channel is one target,
+      /// both halves belong to it.
+      /// </summary>
+      [Parameter] public EventCallback<Channels> OnChannelClick { get; set; }
+
+      /// <summary>
+      /// Raised with the center that was clicked.
+      /// </summary>
+      [Parameter] public EventCallback<Centers> OnCenterClick { get; set; }
+
+      /// <summary>
+      /// The colour of everything the first comparator activates. In a single chart that is
+      /// the personality side.
+      /// </summary>
       [Parameter] public string FirstComparerColor { get; set; } = "#000000";
+
+      /// <summary>
+      /// The colour of everything the second comparator activates. In a single chart that is
+      /// the design side.
+      /// </summary>
       [Parameter] public string SecondComparerColor { get; set; } = "#ff4081";
 
-      [Parameter]
-      public Dictionary<Centers, string> CenterColorMap { get; set; } = new()
+      /// <summary>
+      /// The colour of a channel half that no comparator activates.
+      /// </summary>
+      [Parameter] public string InactiveChannelColor { get; set; } = "lightgrey";
+
+      /// <summary>
+      /// The fill of a center that is not defined.
+      /// </summary>
+      [Parameter] public string UndefinedCenterColor { get; set; } = "white";
+
+      /// <summary>
+      /// The fill of every defined center. A map that leaves centers out is allowed. The
+      /// missing ones fall back to <see cref="DefaultCenterColorMap"/>.
+      /// </summary>
+      [Parameter] public IReadOnlyDictionary<Centers, string> CenterColorMap { get; set; } = DefaultCenterColorMap;
+
+      /// <summary>
+      /// Written in front of the id attribute of every center and every gate. As long as it is
+      /// empty, no id attribute is written at all, and two charts can share one page without
+      /// producing the same id twice. Centers and gates always carry a data-center and a
+      /// data-gate attribute, which may repeat.
+      /// </summary>
+      [Parameter] public string IdPrefix { get; set; } = "";
+
+      /// <summary>
+      /// The colours a defined center is filled with, if <see cref="CenterColorMap"/> says
+      /// nothing about it.
+      /// </summary>
+      public static IReadOnlyDictionary<Centers, string> DefaultCenterColorMap { get; } = new Dictionary<Centers, string>
       {
             [Centers.Root] = "#E88835",
             [Centers.Sacral] = "#FE352C",
@@ -423,13 +187,76 @@
             [Centers.Crown] = "#FFD12B"
       };
 
-      private string _midpoint(string x1, string x2)
-      {
-            var x1f = float.Parse(x1, CultureInfo.InvariantCulture);
-            var x2f = float.Parse(x2, CultureInfo.InvariantCulture);
-            var xm = x1f + (x2f - x1f) / 2;
+      /// <summary>
+      /// The dash pattern of the second stroke of a mixed activation.
+      /// </summary>
+      private const string MixedDashArray = "0.01,0.01";
 
-            return xm.ToString(CultureInfo.InvariantCulture);
+      private (string Color, string? Dash)[] _inactiveStrokes = [];
+      private (string Color, string? Dash)[] _firstStrokes = [];
+      private (string Color, string? Dash)[] _secondStrokes = [];
+      private (string Color, string? Dash)[] _mixedStrokes = [];
+
+      private readonly Dictionary<Centers, Func<Task>> _centerClicks = new();
+      private readonly Dictionary<Channels, Func<Task>> _channelClicks = new();
+
+      protected override void OnParametersSet()
+      {
+            _inactiveStrokes = [(InactiveChannelColor, null)];
+            _firstStrokes = [(FirstComparerColor, null)];
+            _secondStrokes = [(SecondComparerColor, null)];
+            _mixedStrokes = [(FirstComparerColor, null), (SecondComparerColor, MixedDashArray)];
+      }
+
+      /// <summary>
+      /// The strokes that make up one half of a channel. The first entry is the solid base
+      /// stroke. A mixed activation puts a dashed stroke of the second colour on top of it.
+      /// </summary>
+      private (string Color, string? Dash)[] _strokes(ActivationTypes activation) => activation switch
+      {
+            ActivationTypes.FirstComparator => _firstStrokes,
+            ActivationTypes.SecondComparator => _secondStrokes,
+            ActivationTypes.Mixed => _mixedStrokes,
+            _ => _inactiveStrokes
+      };
+
+      /// <summary>
+      /// The fill of a center. An undefined center gets <see cref="UndefinedCenterColor"/>,
+      /// a center the map does not mention falls back to the default map.
+      /// </summary>
+      private string _centerFill(Centers center)
+      {
+            if (!Chart.ConnectedComponents.ContainsKey(center)) return UndefinedCenterColor;
+            return CenterColorMap.TryGetValue(center, out var color) ? color : DefaultCenterColorMap[center];
+      }
+
+      private string? _centerId(CenterLayout center)
+            => IdPrefix.Length == 0 ? null : $"{IdPrefix}center-{center.Name}";
+
+      private string? _gateId(GateLayout gate)
+            => IdPrefix.Length == 0 ? null : $"{IdPrefix}gate-{gate.NumberText}";
+
+      /// <summary>
+      /// The click handler of a center. The handlers are kept, so that a render pass does not
+      /// build a new delegate for every element.
+      /// </summary>
+      private Func<Task> _centerClick(Centers center)
+      {
+            if (_centerClicks.TryGetValue(center, out var handler)) return handler;
+            handler = () => OnCenterClick.InvokeAsync(center);
+            _centerClicks[center] = handler;
+            return handler;
+      }
+
+      /// <summary>
+      /// The click handler of a channel, kept for the same reason as the one of a center.
+      /// </summary>
+      private Func<Task> _channelClick(Channels channel)
+      {
+            if (_channelClicks.TryGetValue(channel, out var handler)) return handler;
+            handler = () => OnChannelClick.InvokeAsync(channel);
+            _channelClicks[channel] = handler;
+            return handler;
       }
 
 }

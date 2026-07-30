@@ -4,6 +4,7 @@
 }
 .center:hover {
     fill: yellow;
+    cursor: pointer;
 }
 
 .channel {

@@ -1,7 +1,7 @@
 @using SharpAstrology.Enums
 @namespace SharpAstrology.HumanDesign.BlazorComponents
 
-<svg width="100%" height="100%" viewBox="0 0 1 1" @onclick="() => OnClickCallback.InvokeAsync(Gate)">
+<svg width="100%" height="100%" viewBox="0 0 1 1" @onclick="_click">
     @switch (Activation)
     {
     case ActivationTypes.FirstComparator:
@@ -32,11 +32,37 @@
 
 @code {
 
+/// <summary>
+/// The gate that is drawn. Its number becomes the label of the circle.
+/// </summary>
 [EditorRequired][Parameter] public Gates Gate { get; set; }
+
+/// <summary>
+/// Decides the fill of the circle. A mixed activation is drawn as two half circles.
+/// </summary>
 [EditorRequired][Parameter] public ActivationTypes Activation { get; set; }
+
+/// <summary>
+/// Raised with <see cref="Gate"/> when the circle is clicked.
+/// </summary>
 [Parameter] public EventCallback<Gates> OnClickCallback { get; set; }
 
+/// <summary>
+/// The colour of an activation of the first comparator.
+/// </summary>
 [Parameter] public string FirstComparerColor { get; set; } = "#000000";
+
+/// <summary>
+/// The colour of an activation of the second comparator.
+/// </summary>
 [Parameter] public string SecondComparerColor { get; set; } = "#ff4081";
+
+private Func<Task>? _clickHandler;
+
+/// <summary>
+/// The click handler, built once. There are sixty four gates in a chart, and every one of
+/// them would otherwise leave a new delegate behind on every render.
+/// </summary>
+private Func<Task> _click => _clickHandler ??= () => OnClickCallback.InvokeAsync(Gate);
 
 }

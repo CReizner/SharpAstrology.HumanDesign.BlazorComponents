@@ -4,12 +4,13 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
-    
+
     <PropertyGroup>
         <PackageId>SharpAstrology.HumanDesign.BlazorComponents</PackageId>
         <PackageTags>Astrology, Human Design</PackageTags>
-        <Version>0.2.1</Version>
+        <Version>0.4.0</Version>
         <Authors>Christian Reizner</Authors>
         <Description>
             This package is part of the SharpAstrology project.
@@ -22,20 +23,50 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="$(PackageReadmeFile)" CopyToOutputDirectory="Always"/>
+        <None Include="README.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
         <SupportedPlatform Include="browser"/>
+        <InternalsVisibleTo Include="SharpAstrology.HumanDesign.BlazorComponents.Tests"/>
     </ItemGroup>
+
+    <!-- These floors are only used in a clone of this repository alone, where the sibling
+         projects are missing. Packing from the full working copy takes the version of each
+         referenced project instead, so every floor is kept at the version that project
+         currently has. Both ways then produce the same dependencies. -->
+    <PropertyGroup>
+        <SharpAstrologyBaseVersion>[0.13.0,)</SharpAstrologyBaseVersion>
+        <SharpAstrologyHumanDesignVersion>[1.2.0,)</SharpAstrologyHumanDesignVersion>
+        <SharpAstrologySymbolsBlazorComponentsVersion>[0.1.0,)</SharpAstrologySymbolsBlazorComponentsVersion>
+    </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="[8.0.0,)"/>
-        <PackageReference Include="SharpAstrology.Base" Version="[0.8.0,)" />
-        <PackageReference Include="SharpAstrology.HumanDesign" Version="[1.0.1,)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="Exists('..\SharpAstrology.Base\SharpAstrology.Base.csproj')">
+        <ProjectReference Include="..\SharpAstrology.Base\SharpAstrology.Base.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="!Exists('..\SharpAstrology.Base\SharpAstrology.Base.csproj')">
+        <PackageReference Include="SharpAstrology.Base" Version="$(SharpAstrologyBaseVersion)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="Exists('..\SharpAstrology.HumanDesign\SharpAstrology.HumanDesign.csproj')">
+        <ProjectReference Include="..\SharpAstrology.HumanDesign\SharpAstrology.HumanDesign.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="!Exists('..\SharpAstrology.HumanDesign\SharpAstrology.HumanDesign.csproj')">
+        <PackageReference Include="SharpAstrology.HumanDesign" Version="$(SharpAstrologyHumanDesignVersion)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="Exists('..\SharpAstrology.Symbols.BlazorComponents\SharpAstrology.Symbols.BlazorComponents.csproj')">
+        <ProjectReference Include="..\SharpAstrology.Symbols.BlazorComponents\SharpAstrology.Symbols.BlazorComponents.csproj" />
+    </ItemGroup>
+    <ItemGroup Condition="!Exists('..\SharpAstrology.Symbols.BlazorComponents\SharpAstrology.Symbols.BlazorComponents.csproj')">
+        <PackageReference Include="SharpAstrology.Symbols.BlazorComponents" Version="$(SharpAstrologySymbolsBlazorComponentsVersion)" />
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="SharpAstrology.HumanDesign.BlazorComponents\obj\project.assets.json" />
-      <_ContentIncludedByDefault Remove="SharpAstrology.HumanDesign.BlazorComponents\obj\SharpAstrology.HumanDesign.BlazorComponents.csproj.nuget.dgspec.json" />
+      <Compile Update="HumanDesignGraph.razor.layout.cs">
+        <DependentUpon>HumanDesignGraph.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
-    
 
 </Project>

@@ -1,9 +1,14 @@
 .hoverable-circle:hover {
     fill: yellow;
     opacity: 0.6;
+    cursor: pointer;
 }
+
+/* The size is given in the coordinates of the gate, whose viewBox is one unit wide. A
+   percentage would refer to the font size of the page instead, and the numbers would grow
+   and shrink with a setting that has nothing to do with the chart. */
 text {
-    font-size: 4%;
+    font-size: 0.64px;
     font-weight: bold;
     letter-spacing: initial;
     text-anchor: middle;
