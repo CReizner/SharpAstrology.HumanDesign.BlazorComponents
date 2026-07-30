@@ -28,12 +28,8 @@
         <InternalsVisibleTo Include="SharpAstrology.HumanDesign.BlazorComponents.Tests"/>
     </ItemGroup>
 
-    <!-- These floors are only used in a clone of this repository alone, where the sibling
-         projects are missing. Packing from the full working copy takes the version of each
-         referenced project instead, so every floor is kept at the version that project
-         currently has. Both ways then produce the same dependencies. -->
     <PropertyGroup>
-        <SharpAstrologyBaseVersion>[0.13.0,)</SharpAstrologyBaseVersion>
+        <SharpAstrologyBaseVersion>[0.14.0,)</SharpAstrologyBaseVersion>
         <SharpAstrologyHumanDesignVersion>[1.2.0,)</SharpAstrologyHumanDesignVersion>
         <SharpAstrologySymbolsBlazorComponentsVersion>[0.1.0,)</SharpAstrologySymbolsBlazorComponentsVersion>
     </PropertyGroup>
